@@ -9,9 +9,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthorizationComponent", "A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csproj", "{3461765F-60A1-21BC-764E-FC799869FE2F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Messanger.AppHost", "Messanger.AppHost\Messanger.AppHost.csproj", "{CBA3F8FA-D5B1-49DB-8145-91DFD71A636E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Messenger.AppHost", "Messanger.AppHost\Messenger.AppHost.csproj", "{CBA3F8FA-D5B1-49DB-8145-91DFD71A636E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Messanger.ServiceDefaults", "Messanger.ServiceDefaults\Messanger.ServiceDefaults.csproj", "{0662C677-9FDB-C0F0-934E-9626C29B8B80}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Messenger.ServiceDefaults", "Messanger.ServiceDefaults\Messenger.ServiceDefaults.csproj", "{0662C677-9FDB-C0F0-934E-9626C29B8B80}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Database", "Database\Database.csproj", "{3B202277-394C-4F6F-98E7-B5199B6F7573}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatComponent", "ChatComponent\ChatComponent.csproj", "{7CD5EFD6-46AA-40D7-8AC6-9BEEA937C608}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +43,14 @@ Global
 		{0662C677-9FDB-C0F0-934E-9626C29B8B80}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0662C677-9FDB-C0F0-934E-9626C29B8B80}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0662C677-9FDB-C0F0-934E-9626C29B8B80}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B202277-394C-4F6F-98E7-B5199B6F7573}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B202277-394C-4F6F-98E7-B5199B6F7573}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B202277-394C-4F6F-98E7-B5199B6F7573}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B202277-394C-4F6F-98E7-B5199B6F7573}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7CD5EFD6-46AA-40D7-8AC6-9BEEA937C608}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CD5EFD6-46AA-40D7-8AC6-9BEEA937C608}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CD5EFD6-46AA-40D7-8AC6-9BEEA937C608}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CD5EFD6-46AA-40D7-8AC6-9BEEA937C608}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

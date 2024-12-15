@@ -2,52 +2,170 @@
 
 public record Message(
     MessageId Id,
-    SenderId SenderId,
-    RecipientId RecipientId,
-    MessageContent Content,
+    UserId SenderId,
+    User Sender,
+    ChatId RecipientId,
+    Chat Recipient,
     MessageStatus Status,
     DateTime CreatedAt,
-    DateTime? EditedAt = null
-    );
+    DateTime? EditedAt
+)
+{
+    public static Message Create(
+        MessageId id,
+        UserId senderId,
+        User sender,
+        ChatId recipientId,
+        Chat recipient,
+        MessageStatus status,
+        DateTime createdAt,
+        DateTime? editedAt)
+    {
+        return new Message(id, senderId, sender, recipientId, recipient, status, createdAt, editedAt);
+    }
+
+    private Message() : this(default!, default!, default!, default!, default!, default!, default!, default!)
+    {
+    }
+
+}
 
 public record MessageId(Guid Value)
 {
-    public static Guid Of(Guid value)
+    public static MessageId Of(Guid value)
     {
-        return value;
+        return new MessageId(value);
     }
 }
 
-
-public record SenderId(Guid Value)
+public record TextMessage(
+    MessageId Id,
+    UserId SenderId,
+    User Sender,
+    ChatId RecipientId,
+    Chat Recipient,
+    MessageStatus Status,
+    DateTime CreatedAt,
+    DateTime? EditedAt,
+    TextContent Text)
+    : Message(Id, SenderId, Sender, RecipientId, Recipient, Status, CreatedAt, EditedAt)
 {
-    public static Guid Of(Guid value)
+    private TextMessage() : this(default!, default!, default!, default!, default!, default!, default!, default!, default!)
     {
-        return value;
     }
 }
 
-public record RecipientId(Guid Value)
+public record TextContent(string Value)
 {
-    public static Guid Of(Guid value)
+    public static TextContent Of(string value)
     {
-        return value;
+        return new TextContent(value);
+    }
+
+}
+
+public record ImageMessage(
+    MessageId Id,
+    UserId SenderId,
+    User Sender,
+    ChatId RecipientId,
+    Chat Recipient,
+    MessageStatus Status,
+    DateTime CreatedAt,
+    DateTime? EditedAt,
+    ImageContent Image)
+    : Message(Id, SenderId, Sender, RecipientId, Recipient, Status, CreatedAt, EditedAt)
+{
+    private ImageMessage() : this(default!, default!, default!, default!, default!, default!, default!, default!, default!)
+    {
     }
 }
 
-public abstract record MessageContent(TextMessageContent MainContent, AdditionContent? AdditionContent);
+public record ImageContent(string Url)
+{
+    public static ImageContent Of(string url)
+    {
+        return new ImageContent(url);
+    }
 
-public abstract record AdditionContent;
-public abstract record MainContent;
-public record TextMessageContent(string Value) : MainContent;
+}
 
-public record ImageMessageContent(string Url) : AdditionContent;
+public record VideoMessage(
+    MessageId Id,
+    UserId SenderId,
+    User Sender,
+    ChatId RecipientId,
+    Chat Recipient,
+    MessageStatus Status,
+    DateTime CreatedAt,
+    DateTime? EditedAt,
+    VideoContent Video)
+    : Message(Id, SenderId, Sender, RecipientId, Recipient, Status, CreatedAt, EditedAt)
+{
+    private VideoMessage() : this(default!, default!, default!, default!, default!, default!, default!, default!, default!)
+    {
+    }
+}
 
-public record VideoMessageContent(string Url) : AdditionContent;
+public record VideoContent(string Url)
+{
+    public static VideoContent Of(string url)
+    {
+        return new VideoContent(url);
+    }
 
-public record AudioMessageContent(string Url) : AdditionContent;
+}
 
-public record FileMessageContent(string Url) : AdditionContent;
+public record AudioMessage(
+    MessageId Id,
+    UserId SenderId,
+    User Sender,
+    ChatId RecipientId,
+    Chat Recipient,
+    MessageStatus Status,
+    DateTime CreatedAt,
+    DateTime? EditedAt,
+    AudioContent File)
+    : Message(Id, SenderId, Sender, RecipientId, Recipient, Status, CreatedAt, EditedAt)
+{
+    private AudioMessage() : this(default!, default!, default!, default!, default!, default!, default!, default!, default!)
+    {
+    }
+}
+
+public record AudioContent(string Url)
+{
+    public static AudioContent Of(string url)
+    {
+        return new AudioContent(url);
+    }
+}
+
+public record FileMessage(
+    MessageId Id,
+    UserId SenderId,
+    User Sender,
+    ChatId RecipientId,
+    Chat Recipient,
+    MessageStatus Status,
+    DateTime CreatedAt,
+    DateTime? EditedAt,
+    FileContent File)
+    : Message(Id, SenderId, Sender, RecipientId, Recipient, Status, CreatedAt, EditedAt)
+{
+    private FileMessage() : this(default!, default!, default!, default!, default!, default!, default!, default!, default!)
+    {
+    }
+}
+
+public record FileContent(string Url)
+{
+    public static FileContent Of(string url)
+    {
+        return new FileContent(url);
+    }
+}
+
 
 public enum MessageStatus
 {
