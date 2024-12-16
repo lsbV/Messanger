@@ -1,11 +1,17 @@
 ﻿namespace Core;
 
-public record User(UserId Id, UserName Name, Email Email, Role Role, AuthorizationVersion AuthorizationVersion)
+public record User(UserId Id, UserName Name, Email Email, AuthorizationVersion AuthorizationVersion)
 {
-    public static User Create(UserId id, UserName name, Email email, Role role, AuthorizationVersion authorizationVersion)
+    private readonly List<GroupChat> _groupChats = [];
+    private readonly List<PrivateChat> _privateChats = [];
+    public IReadOnlyList<GroupChat> GroupChats => _groupChats;
+    public IReadOnlyList<PrivateChat> PrivateChats => _privateChats;
+    public static User Create(UserId id, UserName name, Email email, AuthorizationVersion authorizationVersion)
     {
-        return new User(id, name, email, role, authorizationVersion);
+        return new User(id, name, email, authorizationVersion);
     }
+
+
 }
 
 public record UserId(Guid Value)
@@ -33,10 +39,3 @@ public record Email(string Value)
     }
 }
 
-public record Role(string Value)
-{
-    public static Role Of(string value)
-    {
-        return new Role(value);
-    }
-}

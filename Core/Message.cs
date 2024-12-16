@@ -6,25 +6,13 @@ public record Message(
     User Sender,
     ChatId RecipientId,
     Chat Recipient,
+    MessageContent Content,
     MessageStatus Status,
     DateTime CreatedAt,
     DateTime? EditedAt
 )
 {
-    public static Message Create(
-        MessageId id,
-        UserId senderId,
-        User sender,
-        ChatId recipientId,
-        Chat recipient,
-        MessageStatus status,
-        DateTime createdAt,
-        DateTime? editedAt)
-    {
-        return new Message(id, senderId, sender, recipientId, recipient, status, createdAt, editedAt);
-    }
-
-    private Message() : this(default!, default!, default!, default!, default!, default!, default!, default!)
+    private Message() : this(default!, default!, default!, default!, default!, default!, default!, default!, default!)
     {
     }
 
@@ -38,50 +26,20 @@ public record MessageId(Guid Value)
     }
 }
 
-public record TextMessage(
-    MessageId Id,
-    UserId SenderId,
-    User Sender,
-    ChatId RecipientId,
-    Chat Recipient,
-    MessageStatus Status,
-    DateTime CreatedAt,
-    DateTime? EditedAt,
-    TextContent Text)
-    : Message(Id, SenderId, Sender, RecipientId, Recipient, Status, CreatedAt, EditedAt)
+public abstract record MessageContent
 {
-    private TextMessage() : this(default!, default!, default!, default!, default!, default!, default!, default!, default!)
-    {
-    }
+    public static explicit operator string(MessageContent v) => v.ToString();// This is a conversion operator for the Entity Framework Core
 }
 
-public record TextContent(string Value)
+public record TextContent(string Value) : MessageContent
 {
     public static TextContent Of(string value)
     {
         return new TextContent(value);
     }
-
 }
 
-public record ImageMessage(
-    MessageId Id,
-    UserId SenderId,
-    User Sender,
-    ChatId RecipientId,
-    Chat Recipient,
-    MessageStatus Status,
-    DateTime CreatedAt,
-    DateTime? EditedAt,
-    ImageContent Image)
-    : Message(Id, SenderId, Sender, RecipientId, Recipient, Status, CreatedAt, EditedAt)
-{
-    private ImageMessage() : this(default!, default!, default!, default!, default!, default!, default!, default!, default!)
-    {
-    }
-}
-
-public record ImageContent(string Url)
+public record ImageContent(string Url) : MessageContent
 {
     public static ImageContent Of(string url)
     {
@@ -90,24 +48,7 @@ public record ImageContent(string Url)
 
 }
 
-public record VideoMessage(
-    MessageId Id,
-    UserId SenderId,
-    User Sender,
-    ChatId RecipientId,
-    Chat Recipient,
-    MessageStatus Status,
-    DateTime CreatedAt,
-    DateTime? EditedAt,
-    VideoContent Video)
-    : Message(Id, SenderId, Sender, RecipientId, Recipient, Status, CreatedAt, EditedAt)
-{
-    private VideoMessage() : this(default!, default!, default!, default!, default!, default!, default!, default!, default!)
-    {
-    }
-}
-
-public record VideoContent(string Url)
+public record VideoContent(string Url) : MessageContent
 {
     public static VideoContent Of(string url)
     {
@@ -116,24 +57,7 @@ public record VideoContent(string Url)
 
 }
 
-public record AudioMessage(
-    MessageId Id,
-    UserId SenderId,
-    User Sender,
-    ChatId RecipientId,
-    Chat Recipient,
-    MessageStatus Status,
-    DateTime CreatedAt,
-    DateTime? EditedAt,
-    AudioContent File)
-    : Message(Id, SenderId, Sender, RecipientId, Recipient, Status, CreatedAt, EditedAt)
-{
-    private AudioMessage() : this(default!, default!, default!, default!, default!, default!, default!, default!, default!)
-    {
-    }
-}
-
-public record AudioContent(string Url)
+public record AudioContent(string Url) : MessageContent
 {
     public static AudioContent Of(string url)
     {
@@ -141,24 +65,8 @@ public record AudioContent(string Url)
     }
 }
 
-public record FileMessage(
-    MessageId Id,
-    UserId SenderId,
-    User Sender,
-    ChatId RecipientId,
-    Chat Recipient,
-    MessageStatus Status,
-    DateTime CreatedAt,
-    DateTime? EditedAt,
-    FileContent File)
-    : Message(Id, SenderId, Sender, RecipientId, Recipient, Status, CreatedAt, EditedAt)
-{
-    private FileMessage() : this(default!, default!, default!, default!, default!, default!, default!, default!, default!)
-    {
-    }
-}
 
-public record FileContent(string Url)
+public record FileContent(string Url) : MessageContent
 {
     public static FileContent Of(string url)
     {

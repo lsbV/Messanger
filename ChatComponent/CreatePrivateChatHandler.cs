@@ -4,12 +4,12 @@ public record CreatePrivateChatCommand(UserId Creator, UserId With) : IRequest<P
 
 
 public class CreatePrivateChatHandler(AppDbContext context)
-    : IRequestHandler<CreatePrivateChatCommand, Chat>
+    : IRequestHandler<CreatePrivateChatCommand, PrivateChat>
 {
-    public async Task<Chat> Handle(CreatePrivateChatCommand request, CancellationToken cancellationToken)
+    public async Task<PrivateChat> Handle(CreatePrivateChatCommand request, CancellationToken cancellationToken)
     {
-        var chat = PrivateChat.Create(ChatId.Of(Guid.NewGuid()), request.Creator, request.With);
-        context.Chats.Add(chat);
+        var chat = PrivateChat.Create(new ChatId(Guid.NewGuid()), request.Creator, request.With);
+        context.PrivateChats.Add(chat);
         await context.SaveChangesAsync(cancellationToken);
         return chat;
     }
