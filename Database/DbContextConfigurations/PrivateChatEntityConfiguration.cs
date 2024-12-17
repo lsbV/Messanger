@@ -1,4 +1,4 @@
-﻿namespace Database.Configurations;
+﻿namespace Database.DbContextConfigurations;
 
 internal class PrivateChatEntityConfiguration : IEntityTypeConfiguration<PrivateChat>
 {
@@ -10,12 +10,11 @@ internal class PrivateChatEntityConfiguration : IEntityTypeConfiguration<Private
         builder.Property(c => c.UserId1).HasConversion(c => c.Value, c => UserId.Of(c));
         builder.Property(c => c.UserId2).HasConversion(c => c.Value, c => UserId.Of(c));
 
-        builder.HasOne<User>(pc => pc.User1).WithMany().HasForeignKey(c => c.UserId1)
+        builder.HasOne(pc => pc.User1).WithMany().HasForeignKey(c => c.UserId1)
             .OnDelete(DeleteBehavior.NoAction);
-        builder.HasOne<User>(pc => pc.User2).WithMany().HasForeignKey(c => c.UserId2)
+        builder.HasOne(pc => pc.User2).WithMany().HasForeignKey(c => c.UserId2)
             .OnDelete(DeleteBehavior.NoAction);
 
         builder.UsePropertyAccessMode(PropertyAccessMode.Field);
-        builder.HasMany(c => c.Messages).WithOne().HasForeignKey(m => m.RecipientId);
     }
 }

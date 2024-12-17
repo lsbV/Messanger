@@ -1,4 +1,4 @@
-﻿namespace Database.Configurations;
+﻿namespace Database.DbContextConfigurations;
 
 internal class GroupChatEntityConfiguration : IEntityTypeConfiguration<GroupChat>
 {
@@ -24,17 +24,18 @@ internal class ChatEntityConfiguration : IEntityTypeConfiguration<Chat>
 
     }
 }
-public record GroupChatUser(ChatId GroupChatId, UserId UserId, Role Role);
+
+public record GroupChatUser(ChatId GroupChatId, UserId UserId, Role Role)
+{
+    private GroupChatUser() : this(default!, default!, default!) { }
+
+}
 
 internal class GroupChatUserConfiguration : IEntityTypeConfiguration<GroupChatUser>
 {
     public void Configure(EntityTypeBuilder<GroupChatUser> builder)
     {
-        builder.HasKey(gcu => new { gcu.GroupChatId, gcu.UserId });
-        builder.HasOne<User>().WithMany().HasForeignKey(gcu => gcu.UserId)
-            .OnDelete(DeleteBehavior.NoAction);
-        builder.HasOne<GroupChat>().WithMany().HasForeignKey(gcu => gcu.GroupChatId)
-            .OnDelete(DeleteBehavior.NoAction);
+        builder.HasKey(gcu => new { gcu.GroupChatId, gcu.UserId, gcu.Role });
 
         builder.Property(m => m.Role)
             .HasConversion(r => r.Value, r => Role.Of(r))

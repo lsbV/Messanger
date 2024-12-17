@@ -3,16 +3,14 @@
 public record Message(
     MessageId Id,
     UserId SenderId,
-    User Sender,
     ChatId RecipientId,
-    Chat Recipient,
     MessageContent Content,
     MessageStatus Status,
     DateTime CreatedAt,
     DateTime? EditedAt
 )
 {
-    private Message() : this(default!, default!, default!, default!, default!, default!, default!, default!, default!)
+    private Message() : this(default!, default!, default!, default!, default!, default!, default!)
     {
     }
 

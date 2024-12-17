@@ -1,4 +1,4 @@
-﻿namespace Database.Configurations;
+﻿namespace Database.DbContextConfigurations;
 
 internal class UserEntityConfiguration : IEntityTypeConfiguration<User>
 {

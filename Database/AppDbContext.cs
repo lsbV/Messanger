@@ -1,12 +1,10 @@
-﻿using System.Globalization;
-using Database.Configurations;
+﻿using Database.Configurations;
 
 namespace Database;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
     public virtual DbSet<User> Users { get; set; }
-    public virtual DbSet<Message> Messages { get; set; }
     public virtual DbSet<PrivateChat> PrivateChats { get; set; }
     public virtual DbSet<GroupChat> GroupChats { get; set; }
 
@@ -41,24 +39,24 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         modelBuilder.Entity<GroupChatUser>().HasData(groupChatUsers);
 
 
-        var privateMessage = new Message(MessageId.Of(Guid.Parse("568A44AE-3AD3-4FED-BD9B-1ED5A82705E7")), user1.Id, null!, privateChat.Id, null!, TextContent.Of("Hello"), MessageStatus.Sent, new DateTime(2024, 12, 14, 10, 42, 10, DateTimeKind.Utc), null);
-        modelBuilder.Entity<Message>().HasData(privateMessage);
+        //var privateMessage = new Message(MessageId.Of(Guid.Parse("568A44AE-3AD3-4FED-BD9B-1ED5A82705E7")), user1.Id, privateChat.Id, TextContent.Of("Hello"), MessageStatus.Sent, new DateTime(2024, 12, 14, 10, 42, 10, DateTimeKind.Utc), null);
+        //modelBuilder.Entity<Message>().HasData(privateMessage);
 
-        List<Message> messagesToGroup =
-        [
-            new Message(new MessageId(Guid.Parse("3AA8D0BE-8A87-42E7-9E71-29B639A309B7")),
-                user1.Id, null!,
-                groupChat.Id, null!,
-                new TextContent("Hi, band!"), MessageStatus.Read,
-                new DateTime(2024, 12, 14, 20, 20, 20, DateTimeKind.Utc), null),
-            new Message(new MessageId(Guid.Parse("45445420-71C5-450C-977B-B7BCFB778F7F")),
-                user2.Id, null!,
-                groupChat.Id, null!,
-                new TextContent("Hi, Bob!"), MessageStatus.Sent,
-                new DateTime(2024, 12, 14, 21, 20, 20, DateTimeKind.Utc),
-                new DateTime(2024, 12, 14, 21, 21, 20, DateTimeKind.Utc))
-        ];
-        modelBuilder.Entity<Message>().HasData(messagesToGroup);
+        //List<Message> messagesToGroup =
+        //[
+        //    new Message(new MessageId(Guid.Parse("3AA8D0BE-8A87-42E7-9E71-29B639A309B7")),
+        //        user1.Id, 
+        //        groupChat.Id,
+        //        new TextContent("Hi, band!"), MessageStatus.Read,
+        //        new DateTime(2024, 12, 14, 20, 20, 20, DateTimeKind.Utc), null),
+        //    new Message(new MessageId(Guid.Parse("45445420-71C5-450C-977B-B7BCFB778F7F")),
+        //        user2.Id, 
+        //        groupChat.Id,
+        //        new TextContent("Hi, Bob!"), MessageStatus.Sent,
+        //        new DateTime(2024, 12, 14, 21, 20, 20, DateTimeKind.Utc),
+        //        new DateTime(2024, 12, 14, 21, 21, 20, DateTimeKind.Utc))
+        //];
+        //modelBuilder.Entity<Message>().HasData(messagesToGroup);
 
 
     }
