@@ -1,4 +1,4 @@
-﻿using Database.Configurations;
+﻿using Database.DbContextConfigurations;
 
 namespace Database;
 

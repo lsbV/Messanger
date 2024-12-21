@@ -1,6 +1,4 @@
-﻿using Database.Configurations;
-
-namespace ChatComponent;
+﻿namespace ChatComponent;
 public record CreateGroupChatCommand(UserId Creator, ChatName Name, ImmutableList<UserId> WithUsers) : IRequest<GroupChat>;
 
 public class CreateGroupChatHandler(AppDbContext context)
