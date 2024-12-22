@@ -1,0 +1,9 @@
+﻿global using Core;
+global using Database;
+global using Database.MongoDbConfigurations;
+global using Microsoft.EntityFrameworkCore;
+global using MongoDB.Driver;
+global using Moq;
+global using Tests.Helpers;
+global using Database.Models;
+global using Tests.TestSetup;

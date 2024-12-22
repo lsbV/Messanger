@@ -20,6 +20,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\AuthorizationComponent\AuthorizationComponent.csproj" />
+		<ProjectReference Include="..\ChatComponent\ChatComponent.csproj" />
 		<ProjectReference Include="..\Database\Database.csproj" />
 		<ProjectReference Include="..\Messanger.ServiceDefaults\Messenger.ServiceDefaults.csproj" />
 	</ItemGroup>

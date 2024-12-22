@@ -1,42 +1,52 @@
-﻿using Database.DbContextConfigurations;
+﻿using Database.Models;
 
 namespace Database;
 
-public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
+public class AppDbContext : DbContext
 {
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+    {
+    }
+
+    private AppDbContext() : base()
+    {
+    }
+
     public virtual DbSet<User> Users { get; set; }
+    public virtual DbSet<Chat> Chats { get; set; }
     public virtual DbSet<PrivateChat> PrivateChats { get; set; }
     public virtual DbSet<GroupChat> GroupChats { get; set; }
+    public virtual DbSet<GroupChatUser> GroupChatUsers { get; set; }
+    public virtual DbSet<ChatEvent> ChatEvents { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
-        SeedData(modelBuilder);
     }
 
-    private void SeedData(ModelBuilder modelBuilder)
+    private static void SeedData(ModelBuilder modelBuilder)
     {
-        var user1 = new User(UserId.Of(Guid.Parse("00AD8832-1C8E-4C5E-B0F5-338B619D62F7")), new UserName("User1"), new Email("User1@email.com"), new AuthorizationVersion(1));
-        var user2 = new User(UserId.Of(Guid.Parse("8AEBFC91-EBE4-4080-B9F9-3F1C8312DEB3")), new UserName("User2"), new Email("User2@email.com"), new AuthorizationVersion(1));
-        var user3 = new User(UserId.Of(Guid.Parse("5DEFEB16-A804-4F86-A5EE-1BFE93D37853")), new UserName("User3"), new Email("User3@email.com"), new AuthorizationVersion(1));
-        modelBuilder.Entity<User>().HasData(user1, user2, user3);
+        //var user1 = new User(new UserId(Guid.Parse("00AD8832-1C8E-4C5E-B0F5-338B619D62F7")), new UserName("User1"), new Email("User1@email.com"), new AuthorizationVersion(1));
+        //var user2 = new User(new UserId(Guid.Parse("8AEBFC91-EBE4-4080-B9F9-3F1C8312DEB3")), new UserName("User2"), new Email("User2@email.com"), new AuthorizationVersion(1));
+        //var user3 = new User(new UserId(Guid.Parse("5DEFEB16-A804-4F86-A5EE-1BFE93D37853")), new UserName("User3"), new Email("User3@email.com"), new AuthorizationVersion(1));
+        //modelBuilder.Entity<User>().HasData(user1, user2, user3);
 
 
-        var privateChat = new PrivateChat(new ChatId(Guid.Parse("DC306013-C6F4-4158-84CC-601BC348C13A")), user1.Id, user2.Id);
-        modelBuilder.Entity<PrivateChat>().HasData(privateChat);
+        //var privateChat = new PrivateChat(new ChatId(Guid.Parse("DC306013-C6F4-4158-84CC-601BC348C13A")), user1.Id, user2.Id);
+        //modelBuilder.Entity<PrivateChat>().HasData(privateChat);
 
 
-        var groupChat = new GroupChat(new ChatId(Guid.Parse("A7373D57-3ABB-4C53-AB39-23A3FAA4A2DA")),
-            new ChatName("Band of 3"));
-        modelBuilder.Entity<GroupChat>().HasData(groupChat);
+        //var groupChat = new GroupChat(new ChatId(Guid.Parse("A7373D57-3ABB-4C53-AB39-23A3FAA4A2DA")),
+        //    new ChatName("Band of 3"));
+        //modelBuilder.Entity<GroupChat>().HasData(groupChat);
 
-        List<GroupChatUser> groupChatUsers =
-        [
-            new GroupChatUser(groupChat.Id, user1.Id,new Role("Owner")),
-            new GroupChatUser(groupChat.Id, user2.Id, new Role("User")),
-            new GroupChatUser(groupChat.Id, user3.Id, new Role("User"))
-        ];
-        modelBuilder.Entity<GroupChatUser>().HasData(groupChatUsers);
+        //List<GroupChatUser> groupChatUsers =
+        //[
+        //    new GroupChatUser(groupChat.Id, user1.Id, GroupChatRole.Owner),
+        //    new GroupChatUser(groupChat.Id, user2.Id, GroupChatRole.Manager),
+        //    new GroupChatUser(groupChat.Id, user3.Id, GroupChatRole.User)
+        //];
+        //modelBuilder.Entity<GroupChatUser>().HasData(groupChatUsers);
 
 
         //var privateMessage = new Message(MessageId.Of(Guid.Parse("568A44AE-3AD3-4FED-BD9B-1ED5A82705E7")), user1.Id, privateChat.Id, TextContent.Of("Hello"), MessageStatus.Sent, new DateTime(2024, 12, 14, 10, 42, 10, DateTimeKind.Utc), null);

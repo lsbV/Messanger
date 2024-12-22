@@ -1,0 +1,11 @@
+{
+  "MongoDb": {
+    "ConnectionString": "mongodb://localhost:27017",
+    "DatabaseName": "TestDatabase",
+    "MessageCollectionName": "Messages"
+  },
+  "SqlServer": {
+    "ConnectionString": "Server=localhost;Database=MessengerDbTest;User Id=sa;Password=Password123;Encrypt=False;MultipleActiveResultSets=True;TrustServerCertificate=True"
+  }
+
+}
