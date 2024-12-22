@@ -1,4 +1,6 @@
-﻿namespace Database.DbContextConfigurations;
+﻿using System.Text.Json;
+
+namespace Database.DbContextConfigurations;
 
 internal class UserEntityConfiguration : IEntityTypeConfiguration<User>
 {
@@ -27,6 +29,14 @@ internal class UserEntityConfiguration : IEntityTypeConfiguration<User>
 
         builder
             .Property(u => u.Avatar)
-            .HasConversion(u => u.Url, u => new Avatar(u)).HasMaxLength(255);
+            .HasConversion(u => u.Url, u => new Avatar(u))
+            .HasMaxLength(255);
+
+        builder
+            .Property(u => u.Password)
+            .HasConversion(
+                u => JsonSerializer.Serialize(u, (JsonSerializerOptions)null!),
+                u => JsonSerializer.Deserialize<Password>(u, (JsonSerializerOptions)null!)!)
+            .HasMaxLength(255);
     }
 }

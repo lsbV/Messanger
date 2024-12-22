@@ -1,6 +1,6 @@
 ﻿namespace Core.Exceptions;
 
-public class IncorrectCredentialException(string message, string username) : Exception(message)
+public class IncorrectCredentialException(Email email) : Exception($"Incorrect credentials for user {email}.")
 {
-    public string Username { get; } = username;
+    public Email Email { get; } = email;
 }

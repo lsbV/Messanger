@@ -74,7 +74,7 @@ public class GuidFactorySerializer<T>(
 {
     object IBsonSerializer.Deserialize(BsonDeserializationContext context, BsonDeserializationArgs args)
     {
-        return Deserialize(context, args);
+        return Deserialize(context, args)!;
     }
 
     public void Serialize(BsonSerializationContext context, BsonSerializationArgs args, T value)

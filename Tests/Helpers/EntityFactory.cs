@@ -4,14 +4,21 @@ internal static class EntityFactory
 {
     public static User CreateAndAddToContextRandomUser(AppDbContext context)
     {
+        var user = CreateRandomUser();
+        context.Users.Add(user);
+        return user;
+    }
+
+    public static User CreateRandomUser()
+    {
         var uniqueId = Guid.NewGuid();
         var user = new User(
             new UserId(uniqueId),
             new UserName("User" + uniqueId),
+            new Password("password_" + uniqueId, "salt_" + uniqueId),
             new Email($"user{uniqueId}@email.com"),
             new Avatar("https://www.test.com/images/" + uniqueId),
             new AuthorizationVersion(1));
-        context.Users.Add(user);
         return user;
     }
 
