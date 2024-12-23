@@ -4,8 +4,6 @@ public abstract record Chat(ChatId Id, DateTime CreatedAt)
 {
     private readonly List<ChatEvent> _events = [];
     public IReadOnlyList<ChatEvent> Events => _events;
-    public abstract bool IsParticipant(UserId userId);
-
 }
 public record ChatId(Guid Value);
 
@@ -36,10 +34,6 @@ public record PrivateChat(ChatId Id, UserId UserId1, UserId UserId2, DateTime Cr
     {
         return new PrivateChat(id, userId1, userId2, DateTime.UtcNow);
     }
-    public override bool IsParticipant(UserId userId)
-    {
-        return UserId1 == userId || UserId2 == userId;
-    }
 }
 
 
@@ -50,10 +44,6 @@ public record GroupChat(ChatId Id, ChatName ChatName, ChatDescription ChatDescri
     public static GroupChat Create(ChatName chatName, ChatDescription chatDescription, ChatImage chatImage, GroupChatJoinMode joinMode)
     {
         return new GroupChat(new ChatId(Guid.NewGuid()), chatName, chatDescription, chatImage, joinMode, DateTime.UtcNow);
-    }
-    public override bool IsParticipant(UserId userId)
-    {
-        return Users.Any(u => u.Id == userId);
     }
 }
 

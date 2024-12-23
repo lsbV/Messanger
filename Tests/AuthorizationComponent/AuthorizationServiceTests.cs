@@ -7,9 +7,9 @@ public class AuthorizationServiceTests : IDisposable
     private readonly AuthorizationService _authorizationService;
     private readonly AppDbContext _context;
 
-    public AuthorizationServiceTests(SqlServerAssemblyFixture sqlServerAssemblyFixture, TokenGeneratorAssemblyFixture tokenGeneratorFixture)
+    public AuthorizationServiceTests(SqlFixture sqlFixture, TokenGeneratorAssemblyFixture tokenGeneratorFixture)
     {
-        _context = new AppDbContext(sqlServerAssemblyFixture.Options);
+        _context = new AppDbContext(sqlFixture.Options);
 
         _authorizationService = new AuthorizationService(_context, new TokenGenerator(tokenGeneratorFixture.SigningCredentials, tokenGeneratorFixture.Options));
     }

@@ -1,6 +1,6 @@
 ﻿using Database.Models;
 
-namespace ChatComponent.ChatOperations.Leave;
+namespace ChatComponent.ChatOperations;
 
 public record LeaveGroupChatCommand(ChatId ChatId, UserId UserId) : IRequest;
 

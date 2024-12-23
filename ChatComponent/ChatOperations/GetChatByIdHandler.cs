@@ -1,18 +1,20 @@
-﻿namespace ChatComponent.ChatOperations.Get;
+﻿namespace ChatComponent.ChatOperations;
 
-public record GetChatByIdQuery(ChatId Id) : IRequest<Chat>;
+public record GetChatByIdQuery(ChatId ChatId) : IRequest<Chat>;
 
 public class GetChatByIdHandler(AppDbContext context)
     : IRequestHandler<GetChatByIdQuery, Chat>
 {
     public async Task<Chat> Handle(GetChatByIdQuery request, CancellationToken cancellationToken)
     {
-        var chat = await context.Chats.FindAsync([request.Id], cancellationToken: cancellationToken);
+
+        var chat = await context.Chats.FindAsync([request.ChatId], cancellationToken: cancellationToken);
+
 
         switch (chat)
         {
             case null:
-                throw new ChatNotFoundException(request.Id);
+                throw new ChatNotFoundException(request.ChatId);
             case GroupChat groupChat:
                 await context.Entry(groupChat)
                     .Collection(gc => gc.Users)

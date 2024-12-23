@@ -1,0 +1,1 @@
+internal record ChatDto(string Id, string Type);

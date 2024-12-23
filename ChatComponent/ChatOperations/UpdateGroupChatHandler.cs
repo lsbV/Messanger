@@ -1,7 +1,7 @@
 ﻿using Core.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
-namespace ChatComponent.ChatOperations.Update;
+namespace ChatComponent.ChatOperations;
 
 public record UpdateGroupChatCommand(ChatId ChatId, ChatName ChatName, ChatDescription ChatDescription, ChatImage ChatImage) : IRequest<GroupChat>;
 

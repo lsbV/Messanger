@@ -1,0 +1,9 @@
+﻿global using Server.Extensions;
+global using System.Globalization;
+global using Core;
+global using ChatComponent.ChatOperations;
+global using Core.Exceptions;
+global using Database;
+global using MediatR;
+global using Microsoft.AspNetCore.Mvc;
+global using Server.Behaviors;

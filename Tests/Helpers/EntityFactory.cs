@@ -8,6 +8,8 @@ internal static class EntityFactory
         context.Users.Add(user);
         return user;
     }
+    public static UserId RandomUserId() => new UserId(Guid.NewGuid());
+    public static ChatId RandomChatId() => new ChatId(Guid.NewGuid());
 
     public static User CreateRandomUser()
     {
@@ -62,10 +64,15 @@ internal static class EntityFactory
         return chat;
     }
 
-    public static Message CreateAndAddToContextRandomMessage(ChatId chatId, UserId ownerId)
+    public static Message CreateAndAddToContextRandomMessage(ChatId chatId, UserId senderId)
     {
         var uniqueId = Guid.NewGuid();
 
-        return new Message(new MessageId(uniqueId), ownerId, chatId, new TextContent("Hello" + uniqueId), MessageStatus.Sent, DateTime.UtcNow, null);
+        return new Message(new MessageId(uniqueId), senderId, chatId, new TextContent("Hello " + uniqueId), MessageStatus.Sent, DateTime.UtcNow, null);
     }
+
+    public static Message CreateAndAddToContextRandomMessage() =>
+        CreateAndAddToContextRandomMessage(EntityFactory.RandomChatId(), EntityFactory.RandomUserId());
+
+    public static MessageId RandomMessageId() => new MessageId(Guid.NewGuid());
 }

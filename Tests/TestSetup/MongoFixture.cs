@@ -1,25 +1,25 @@
 ﻿using Microsoft.Extensions.Configuration;
 
-[assembly: AssemblyFixture(typeof(MongoDbAssemblyFixture))]
+[assembly: AssemblyFixture(typeof(MongoFixture))]
 namespace Tests.TestSetup;
 
-public class MongoDbAssemblyFixture : IDisposable
+public class MongoFixture : IDisposable
 {
     public readonly MongoClient MongoClient;
     public readonly IMongoDatabase Database;
     public readonly IMongoCollection<Message> MessageCollection;
-    private readonly IConfiguration _configuration;
     private bool _disposed;
 
-    public MongoDbAssemblyFixture()
+    public MongoFixture()
     {
-        _configuration = new ConfigurationBuilder()
+        var configuration = new ConfigurationBuilder()
             .AddJsonFile("testsettings.json")
             .Build();
-        MongoClient = new MongoClient(_configuration["MongoDb:ConnectionString"]);
+        MongoClient = new MongoClient(configuration["MongoDb:ConnectionString"]);
         MongoClient.ConfigureMessageEntity();
-        Database = MongoClient.GetDatabase(_configuration["MongoDb:DatabaseName"]);
-        MessageCollection = Database.GetCollection<Message>(_configuration["MongoDb:MessageCollectionName"]);
+        Database = MongoClient.GetDatabase(configuration["MongoDb:DatabaseName"]);
+        MessageCollection = Database.GetCollection<Message>(configuration["MongoDb:MessageCollectionName"]);
+        MongoClient.DropDatabase(configuration["MongoDb:DatabaseName"]);
     }
 
     protected virtual void Dispose(bool disposing)
@@ -27,7 +27,7 @@ public class MongoDbAssemblyFixture : IDisposable
         if (_disposed) return;
         if (disposing)
         {
-            MongoClient.DropDatabase(_configuration["MongoDb:DatabaseName"]);
+            MongoClient.Dispose();
         }
         _disposed = true;
     }

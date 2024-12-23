@@ -1,4 +1,4 @@
-﻿using ChatComponent.ChatOperations.Update;
+﻿using ChatComponent.ChatOperations;
 
 namespace Tests.ChatComponent;
 
@@ -7,7 +7,7 @@ public class UpdateGroupChatHandlerTests : IDisposable
     private readonly AppDbContext _context;
     private readonly UpdateGroupChatHandler _handler;
 
-    public UpdateGroupChatHandlerTests(SqlServerAssemblyFixture sqlServerFixture, MongoDbAssemblyFixture mongoDbFixture)
+    public UpdateGroupChatHandlerTests(SqlFixture sqlServerFixture, MongoFixture mongoDbFixture)
     {
         _context = new AppDbContext(sqlServerFixture.Options);
         _handler = new UpdateGroupChatHandler(_context);

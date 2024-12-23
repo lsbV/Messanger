@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace ChatComponent.ChatOperations.Create;
+namespace ChatComponent.ChatOperations;
 
 public record CreatePrivateChatCommand(UserId Creator, UserId With, MessageContent FirstMessage) : IRequest<PrivateChat>;
 
@@ -11,8 +11,8 @@ public class CreatePrivateChatHandler(AppDbContext context, IMongoCollection<Mes
     public async Task<PrivateChat> Handle(CreatePrivateChatCommand request, CancellationToken cancellationToken)
     {
         var existedChat = await context.PrivateChats.FirstOrDefaultAsync(c =>
-            (c.UserId1 == request.Creator && c.UserId2 == request.With) ||
-            (c.UserId1 == request.With && c.UserId2 == request.Creator),
+            c.UserId1 == request.Creator && c.UserId2 == request.With ||
+            c.UserId1 == request.With && c.UserId2 == request.Creator,
             cancellationToken
         );
         if (existedChat != null)

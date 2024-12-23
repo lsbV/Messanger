@@ -1,11 +1,11 @@
-﻿namespace ChatComponent.ChatOperations.Delete;
+﻿namespace ChatComponent.ChatOperations;
 
-public record DeleteChatByIdCommand(ChatId Id) : IRequest;
+public record DeleteChatByIdCommand(ChatId Id) : IRequest<Unit>;
 
 public class DeleteChatByIdHandler(AppDbContext context, IMongoCollection<Message> messageCollection)
-    : IRequestHandler<DeleteChatByIdCommand>
+    : IRequestHandler<DeleteChatByIdCommand, Unit>
 {
-    public async Task Handle(DeleteChatByIdCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(DeleteChatByIdCommand request, CancellationToken cancellationToken)
     {
         var chat = await context.Chats.FindAsync([request.Id], cancellationToken);
         if (chat == null)
@@ -24,6 +24,7 @@ public class DeleteChatByIdHandler(AppDbContext context, IMongoCollection<Messag
                 cancellationToken: cancellationToken);
 
             await session.CommitAsync(cancellationToken);
+            return Unit.Value;
         }
         catch (Exception)
         {

@@ -1,8 +1,8 @@
-﻿using ChatComponent.ChatOperations.Get;
+﻿using ChatComponent.ChatOperations;
 
 namespace Tests.ChatComponent;
 
-public class GetChatByIdHandlerTests(SqlServerAssemblyFixture sqlFixture) : IDisposable
+public class GetChatByIdHandlerTests(SqlFixture sqlFixture) : IDisposable
 {
     private readonly AppDbContext context = new AppDbContext(sqlFixture.Options);
 

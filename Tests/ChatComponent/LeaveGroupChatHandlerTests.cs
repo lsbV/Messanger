@@ -1,4 +1,4 @@
-﻿using ChatComponent.ChatOperations.Leave;
+﻿using ChatComponent.ChatOperations;
 using ChatComponent.Exceptions;
 
 namespace Tests.ChatComponent;
@@ -8,7 +8,7 @@ public class LeaveGroupChatHandlerTests : IDisposable
     private readonly AppDbContext _context;
     private readonly LeaveGroupChatHandler _handler;
 
-    public LeaveGroupChatHandlerTests(SqlServerAssemblyFixture sqlFixture)
+    public LeaveGroupChatHandlerTests(SqlFixture sqlFixture)
     {
         _context = new AppDbContext(sqlFixture.Options);
         _handler = new LeaveGroupChatHandler(_context);

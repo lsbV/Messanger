@@ -14,8 +14,6 @@ public record User(
     public IReadOnlyList<PrivateChat> PrivateChats => _privateChats;
 }
 
-public record PasswordSalt(string Value);
-
 public record Password(string Hash, string Salt);
 
 public record Avatar(string Url);

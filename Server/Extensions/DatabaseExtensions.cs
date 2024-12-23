@@ -1,5 +1,4 @@
-﻿using Core;
-using Database;
+﻿using Database;
 using Database.MongoDbConfigurations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;

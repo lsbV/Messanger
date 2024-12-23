@@ -10,7 +10,8 @@ public class TokenGenerator(SigningCredentials credentials, IOptions<TokenGenera
         [
             new(ClaimTypes.NameIdentifier, user.Id.Value.ToString()),
             new(ClaimTypes.Name, user.Name.Value),
-            new(ClaimTypes.Email, user.Email.Value)
+            new(ClaimTypes.Email, user.Email.Value),
+            new(ClaimTypes.Version, user.AuthorizationVersion.Value.ToString())
         ];
         var nowWithoutSeconds = DateTime.Now.AddSeconds(-DateTime.Now.Second);
 

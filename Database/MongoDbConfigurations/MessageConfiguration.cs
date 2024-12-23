@@ -23,6 +23,14 @@ public static class MessageConfiguration
 
             cm.MapMember(c => c.Status)
                 .SetSerializer(new EnumSerializer<MessageStatus>(BsonType.String));
+
+            //save created and edited at as ticks
+            cm.MapMember(c => c.CreatedAt)
+                .SetSerializer(new DateTimeSerializer(DateTimeKind.Utc, BsonType.Int64));
+
+            cm.MapMember(c => c.EditedAt)
+                .SetSerializer(new NullableSerializer<DateTime>(new DateTimeSerializer(DateTimeKind.Utc, BsonType.Int64)));
+
         });
 
         BsonClassMap.RegisterClassMap<MessageContent>(cm =>

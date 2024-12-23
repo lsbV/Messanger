@@ -1,4 +1,4 @@
-﻿using ChatComponent.ChatOperations.Join;
+﻿using ChatComponent.ChatOperations;
 using ChatComponent.Exceptions;
 using Core.Exceptions;
 
@@ -10,7 +10,7 @@ public class UserJoinGroupChatHandlerTests
     private readonly UserJoinGroupChatHandler _handler;
     private readonly AppDbContext _context;
 
-    public UserJoinGroupChatHandlerTests(SqlServerAssemblyFixture fixture)
+    public UserJoinGroupChatHandlerTests(SqlFixture fixture)
     {
         _context = new AppDbContext(fixture.Options);
         _handler = new UserJoinGroupChatHandler(_context);

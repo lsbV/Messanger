@@ -8,3 +8,4 @@ global using Tests.Helpers;
 global using Database.Models;
 global using Tests.TestSetup;
 global using AuthorizationComponent;
+global using ChatComponent.ChatOperations;

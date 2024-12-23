@@ -1,5 +1,4 @@
-using System.Globalization;
-using Core;
+
 
 internal static class MappingExtensions
 {
@@ -32,6 +31,42 @@ internal static class MappingExtensions
             TextContent text => new TextContentDto("Text", text.Value),
             _ => throw new ArgumentOutOfRangeException(nameof(content))
         };
+    }
+
+    public static ChatDto ToDto(this Chat chat)
+    {
+        ChatDto dto = chat switch
+        {
+            PrivateChat privateChat => new PrivateChatDto(
+                privateChat.Id.Value.ToString(),
+                nameof(PrivateChat),
+                privateChat.User1.ToDto(),
+                privateChat.User2.ToDto()
+
+            ),
+            GroupChat groupChat => new GroupChatDto(
+                groupChat.Id.Value.ToString(),
+                nameof(GroupChat),
+                groupChat.Users.Select(u => u.ToDto()).ToList(),
+                groupChat.ChatName.Value,
+                groupChat.ChatDescription.Value,
+                groupChat.ChatImage.Url,
+                groupChat.JoinMode.ToString()
+            ),
+            _ => throw new ArgumentOutOfRangeException(nameof(chat))
+        };
+        return dto;
+    }
+
+    public static PublicUserInfoDto ToDto(this User? user)
+    {
+        return user == null
+            ? throw new ArgumentNullException(nameof(user))
+            : new PublicUserInfoDto(
+                user.Id.Value.ToString(),
+                user.Name.Value,
+                user.Avatar.Url
+            );
     }
 
 }

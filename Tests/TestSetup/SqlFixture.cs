@@ -1,15 +1,15 @@
 ﻿using Microsoft.Extensions.Configuration;
 
-[assembly: AssemblyFixture(typeof(SqlServerAssemblyFixture))]
+[assembly: AssemblyFixture(typeof(SqlFixture))]
 
 namespace Tests.TestSetup;
 
-public class SqlServerAssemblyFixture : IDisposable
+public class SqlFixture : IDisposable
 {
     private readonly AppDbContext _context;
     public readonly DbContextOptions<AppDbContext> Options;
     private bool _disposed;
-    public SqlServerAssemblyFixture()
+    public SqlFixture()
     {
 
         var config = new ConfigurationBuilder()
@@ -21,7 +21,9 @@ public class SqlServerAssemblyFixture : IDisposable
             .Options;
         _context = new AppDbContext(Options);
         _context.Database.EnsureDeleted();
-        _context.Database.EnsureCreated();
+        _context.EnsureCreated();
+        //_context.Database.EnsureCreated();
+
     }
 
     protected virtual void Dispose(bool disposing)

@@ -1,12 +1,12 @@
-﻿using ChatComponent.ChatOperations.Delete;
+﻿
 using ChatComponent.Exceptions;
 
 namespace Tests.ChatComponent;
 
-public class DeleteChatByIdHandlerTests(SqlServerAssemblyFixture sqlFixture, MongoDbAssemblyFixture mongoDbAssemblyFixture) : IDisposable
+public class DeleteChatByIdHandlerTests(SqlFixture sqlFixture, MongoFixture mongoFixture) : IDisposable
 {
     private readonly AppDbContext context = new AppDbContext(sqlFixture.Options);
-    private readonly IMongoCollection<Message> messageCollection = mongoDbAssemblyFixture.MessageCollection;
+    private readonly IMongoCollection<Message> messageCollection = mongoFixture.MessageCollection;
 
 
     [Fact]

@@ -1,7 +1,7 @@
 ﻿using Core.Exceptions;
 using Database.Models;
 
-namespace ChatComponent.ChatOperations.Join;
+namespace ChatComponent.ChatOperations;
 
 public record UserJoinGroupChatRequest(UserId UserId, ChatId GroupChatId) : IRequest;
 

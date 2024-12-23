@@ -1,11 +1,9 @@
-﻿using ChatComponent.ChatOperations.Create;
+﻿namespace Tests.ChatComponent;
 
-namespace Tests.ChatComponent;
-
-public class CreatePrivateChatHandlerTests(SqlServerAssemblyFixture sqlFixture, MongoDbAssemblyFixture mongoDbAssemblyFixture) : IDisposable
+public class CreatePrivateChatHandlerTests(SqlFixture sqlFixture, MongoFixture mongoFixture) : IDisposable
 {
     private readonly AppDbContext _context = new AppDbContext(sqlFixture.Options);
-    private readonly IMongoCollection<Message> _messageCollection = mongoDbAssemblyFixture.MessageCollection;
+    private readonly IMongoCollection<Message> _messageCollection = mongoFixture.MessageCollection;
     private bool _disposedValue;
 
     [Fact]

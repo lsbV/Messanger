@@ -1,4 +1,4 @@
-﻿using ChatComponent.ChatOperations.Leave;
+﻿using ChatComponent.ChatOperations;
 using Core.Exceptions;
 using Database.Models;
 

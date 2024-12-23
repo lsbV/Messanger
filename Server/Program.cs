@@ -1,6 +1,4 @@
-using System.Text.Json.Serialization;
-using Server.Converters;
-using Server.Extensions;
+using Messenger.ServiceDefaults;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,11 +6,10 @@ builder.AddServiceDefaults();
 
 builder.Services.AddDatabases(builder.Configuration);
 
-builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =>
-{
-    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
-    options.SerializerOptions.Converters.Add(new ContentDtoJsonConverter());
-});
+builder.Services.AddChatComponent();
+builder.Services.ConfigureJsonSerialization();
+
+
 
 
 
