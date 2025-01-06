@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
+using Scalar.AspNetCore;
 
 namespace Messenger.ServiceDefaults;
 
@@ -31,6 +32,8 @@ public static class Extensions
             // Turn on service discovery by default
             http.AddServiceDiscovery();
         });
+
+        builder.Services.AddOpenApi();
 
         // Uncomment the following to restrict the allowed schemes for service discovery.
         // builder.Services.Configure<ServiceDiscoveryOptions>(options =>
@@ -112,6 +115,9 @@ public static class Extensions
             {
                 Predicate = r => r.Tags.Contains("live")
             });
+
+            app.MapOpenApi();
+            app.MapScalarApiReference();
         }
 
         return app;

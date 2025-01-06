@@ -8,8 +8,8 @@ internal static class EntityFactory
         context.Users.Add(user);
         return user;
     }
-    public static UserId RandomUserId() => new UserId(Guid.NewGuid());
-    public static ChatId RandomChatId() => new ChatId(Guid.NewGuid());
+    public static UserId CreateRandomUserId() => new UserId(Guid.NewGuid());
+    public static ChatId CreateRandomChatId() => new ChatId(Guid.NewGuid());
 
     public static User CreateRandomUser()
     {
@@ -17,7 +17,9 @@ internal static class EntityFactory
         var user = new User(
             new UserId(uniqueId),
             new UserName("User" + uniqueId),
-            new Password("password_" + uniqueId, "salt_" + uniqueId),
+            new Password(
+                new PasswordHash("password_" + uniqueId),
+                new PasswordSalt("salt_" + uniqueId)),
             new Email($"user{uniqueId}@email.com"),
             new Avatar("https://www.test.com/images/" + uniqueId),
             new AuthorizationVersion(1));
@@ -30,6 +32,9 @@ internal static class EntityFactory
         context.Chats.Add(chat);
         return chat;
     }
+
+    public static PrivateChat CreateRandomPrivateChat() =>
+        new PrivateChat(CreateRandomChatId(), CreateRandomUserId(), CreateRandomUserId(), DateTime.UtcNow);
 
     public static GroupChat CreateAndAddToContextRandomGroupChat(AppDbContext context, List<User> members)
     {
@@ -64,15 +69,21 @@ internal static class EntityFactory
         return chat;
     }
 
-    public static Message CreateAndAddToContextRandomMessage(ChatId chatId, UserId senderId)
+    public static Message CreateRandomMessage(ChatId chatId, UserId senderId)
     {
         var uniqueId = Guid.NewGuid();
 
         return new Message(new MessageId(uniqueId), senderId, chatId, new TextContent("Hello " + uniqueId), MessageStatus.Sent, DateTime.UtcNow, null);
     }
 
-    public static Message CreateAndAddToContextRandomMessage() =>
-        CreateAndAddToContextRandomMessage(EntityFactory.RandomChatId(), EntityFactory.RandomUserId());
+    public static Message CreateRandomMessage() =>
+        CreateRandomMessage(EntityFactory.CreateRandomChatId(), EntityFactory.CreateRandomUserId());
 
     public static MessageId RandomMessageId() => new MessageId(Guid.NewGuid());
+
+    public static RawPassword GenerateRandomRawPassword()
+    {
+        var uniqueId = Guid.NewGuid();
+        return new RawPassword("password_" + uniqueId);
+    }
 }

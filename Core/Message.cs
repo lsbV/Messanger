@@ -10,14 +10,16 @@ public record Message(
     DateTime? EditedAt
 )
 {
-    private Message() : this(default!, default!, default!, default!, default!, default!, default!)
-    {
-    }
+    //private Message() : this(default!, default!, default!, default!, default!, default!, default!)
+    //{
+    //}
 }
 
 public record MessageId(Guid Value);
 
 public abstract record MessageContent;
+
+public record DeletedContent(DateTime DeletedAt) : MessageContent;
 
 public record TextContent(string Value) : MessageContent;
 
@@ -25,7 +27,7 @@ public abstract record MediaContent(
     string Url,
     string Name,
     uint Size,
-    IReadOnlyDictionary<string, string> Metadata);
+    IReadOnlyDictionary<string, string> Metadata) : MessageContent;
 
 public record ImageContent(string Url, string Name, uint Size)
     : MediaContent(Url, Name, Size, new Dictionary<string, string>());

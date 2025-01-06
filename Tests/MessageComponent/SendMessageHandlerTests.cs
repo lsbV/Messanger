@@ -21,7 +21,7 @@ public class SendMessageHandlerTests
         var user = EntityFactory.CreateAndAddToContextRandomUser(_context);
         var chat = EntityFactory.CreateAndAddToContextRandomGroupChat(_context, [user]);
         await _context.SaveChangesAsync(TestContext.Current.CancellationToken);
-        var request = new SendMessageRequest(user.Id, chat.Id, new TextContent("Hello"));
+        var request = new SendMessageCommand(user.Id, chat.Id, new TextContent("Hello"));
 
         // Act
         var message = await _sendMessageHandler.HandleAsync(request, TestContext.Current.CancellationToken);
@@ -40,7 +40,7 @@ public class SendMessageHandlerTests
 
         var chat = EntityFactory.CreateAndAddToContextRandomGroupChat(_context, []);
         await _context.SaveChangesAsync(TestContext.Current.CancellationToken);
-        var request = new SendMessageRequest(EntityFactory.RandomUserId(), chat.Id, new TextContent("Hello"));
+        var request = new SendMessageCommand(EntityFactory.CreateRandomUserId(), chat.Id, new TextContent("Hello"));
         // Act
         Func<Task> act = async () => await _sendMessageHandler.HandleAsync(request, TestContext.Current.CancellationToken);
         // Assert
@@ -53,7 +53,7 @@ public class SendMessageHandlerTests
         // Arrange
         var user = EntityFactory.CreateAndAddToContextRandomUser(_context);
         await _context.SaveChangesAsync(TestContext.Current.CancellationToken);
-        var request = new SendMessageRequest(user.Id, EntityFactory.RandomChatId(), new TextContent("Hello"));
+        var request = new SendMessageCommand(user.Id, EntityFactory.CreateRandomChatId(), new TextContent("Hello"));
         // Act
         Func<Task> act = async () => await _sendMessageHandler.HandleAsync(request, TestContext.Current.CancellationToken);
         // Assert
@@ -67,7 +67,7 @@ public class SendMessageHandlerTests
         var user = EntityFactory.CreateAndAddToContextRandomUser(_context);
         var chat = EntityFactory.CreateAndAddToContextRandomGroupChat(_context, []);
         await _context.SaveChangesAsync(TestContext.Current.CancellationToken);
-        var request = new SendMessageRequest(user.Id, chat.Id, new TextContent("Hello"));
+        var request = new SendMessageCommand(user.Id, chat.Id, new TextContent("Hello"));
         // Act
         Func<Task> act = async () => await _sendMessageHandler.HandleAsync(request, TestContext.Current.CancellationToken);
         // Assert
@@ -83,7 +83,7 @@ public class SendMessageHandlerTests
         var user3 = EntityFactory.CreateAndAddToContextRandomUser(_context);
         var chat = EntityFactory.CreateAndAddToContextRandomPrivateChat(_context, user1.Id, user2.Id);
         await _context.SaveChangesAsync(TestContext.Current.CancellationToken);
-        var request = new SendMessageRequest(user3.Id, chat.Id, new TextContent("Hello"));
+        var request = new SendMessageCommand(user3.Id, chat.Id, new TextContent("Hello"));
         // Act
         Func<Task> act = async () => await _sendMessageHandler.HandleAsync(request, TestContext.Current.CancellationToken);
         // Assert

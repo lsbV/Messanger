@@ -1,15 +1,9 @@
-
+namespace Server.Extensions;
 
 internal static class MappingExtensions
 {
     public static MessageDto ToDto(this Message message)
     {
-        var contentAndType = message.Content switch
-        {
-            TextContent text => (text.Value, nameof(TextContent)),
-            _ => throw new ArgumentOutOfRangeException(nameof(message.Content))
-
-        };
         var dto = new MessageDto(
             message.Id.Value.ToString(),
             message.SenderId.Value.ToString(),
@@ -24,12 +18,21 @@ internal static class MappingExtensions
 
     }
 
-    public static ContentDto ToDto(this MessageContent content)
+    private static MessageContentDto ToDto(this MessageContent content)
     {
         return content switch
         {
-            TextContent text => new TextContentDto("Text", text.Value),
+            TextContent text => new TextMessageContentDto("Text", text.Value),
             _ => throw new ArgumentOutOfRangeException(nameof(content))
+        };
+    }
+
+    public static MessageContent ToDomain(this MessageContentDto dto)
+    {
+        return dto switch
+        {
+            TextMessageContentDto text => new TextContent(text.Text),
+            _ => throw new ArgumentOutOfRangeException(nameof(dto))
         };
     }
 
@@ -67,6 +70,17 @@ internal static class MappingExtensions
                 user.Name.Value,
                 user.Avatar.Url
             );
+    }
+
+    public static AuthorizationInfoDto ToDto(this AuthorizationInfo authorizationInfo)
+    {
+        return new AuthorizationInfoDto(
+            authorizationInfo.UserId.Value.ToString(),
+            authorizationInfo.Name.Value,
+            authorizationInfo.Email.Value,
+            authorizationInfo.Avatar.Url,
+            authorizationInfo.Token
+        );
     }
 
 }

@@ -14,11 +14,16 @@ public record User(
     public IReadOnlyList<PrivateChat> PrivateChats => _privateChats;
 }
 
-public record Password(string Hash, string Salt);
-
+public record Password(PasswordHash Hash, PasswordSalt Salt);
+public record PasswordSalt(string Value);
+public record PasswordHash(string Value);
 public record Avatar(string Url);
 
-public record UserId(Guid Value);
+public record UserId(Guid Value)
+{
+    public static UserId New() => new(Guid.NewGuid());
+    public static explicit operator string(UserId userId) => userId.Value.ToString();
+}
 
 public record UserName(string Value);
 

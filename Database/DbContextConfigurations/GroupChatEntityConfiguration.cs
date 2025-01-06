@@ -15,7 +15,7 @@ internal class GroupChatEntityConfiguration : IEntityTypeConfiguration<GroupChat
         builder
             .Property(c => c.ChatName)
             .HasConversion(c => c.Value, c => new ChatName(c))
-            .HasMaxLength(30);
+            .HasMaxLength(100);
 
         builder
             .Property(c => c.ChatDescription)

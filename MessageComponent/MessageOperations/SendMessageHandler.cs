@@ -1,22 +1,22 @@
 ﻿namespace MessageComponent.MessageOperations;
 
-public record SendMessageRequest(UserId SenderId, ChatId ReceiverId, MessageContent Content) : IRequest<Message>;
+public record SendMessageCommand(UserId SenderId, ChatId ReceiverId, MessageContent Content) : IRequest<Message>;
 
 public class SendMessageHandler(IMongoCollection<Message> messageCollection, AppDbContext context)
 {
-    public async Task<Message> HandleAsync(SendMessageRequest request, CancellationToken cancellationToken)
+    public async Task<Message> HandleAsync(SendMessageCommand command, CancellationToken cancellationToken)
     {
-        var result = await context.CheckUserAndChatExistenceAsync(request.SenderId, request.ReceiverId, cancellationToken);
+        var result = await context.CheckUserAndChatExistenceAsync(command.SenderId, command.ReceiverId, cancellationToken);
         if (!result.ChatExists || !result.UserExists || !result.IsMemberOfChat)
         {
-            throw new IncorrectMessageRequestException(request.SenderId, request.ReceiverId);
+            throw new IncorrectMessageRequestException(command.SenderId, command.ReceiverId);
         }
 
         var message = new Message(
             new MessageId(Guid.NewGuid()),
-            request.SenderId,
-            request.ReceiverId,
-            request.Content,
+            command.SenderId,
+            command.ReceiverId,
+            command.Content,
             MessageStatus.Sent,
             DateTime.UtcNow,
             null

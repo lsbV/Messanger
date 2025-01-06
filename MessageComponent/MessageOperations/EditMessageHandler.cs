@@ -2,22 +2,24 @@
 
 namespace MessageComponent.MessageOperations;
 
-public record EditMessageRequest(MessageId MessageId, MessageContent NewContent) : IRequest<Message>;
+public record EditMessageCommand(UserId EditorId, MessageId MessageId, MessageContent NewContent) : IRequest<Message>;
 
 public class EditMessageHandler(IMongoCollection<Message> messageCollection)
-    : IRequestHandler<EditMessageRequest, Message>
+    : IRequestHandler<EditMessageCommand, Message>
 {
-    public async Task<Message> Handle(EditMessageRequest request, CancellationToken cancellationToken)
+    public async Task<Message> Handle(EditMessageCommand command, CancellationToken cancellationToken)
     {
-        var message = await messageCollection.Find(m => m.Id == request.MessageId).FirstOrDefaultAsync(cancellationToken);
+        var message = await messageCollection.Find(m => m.Id == command.MessageId).FirstOrDefaultAsync(cancellationToken);
 
         if (message == null)
-            throw new MessageNotFoundException(request.MessageId);
-        if (message.Content == request.NewContent)
+            throw new MessageNotFoundException(command.MessageId);
+        if (message.SenderId != command.EditorId)
+            throw new ForbiddenOperationException(nameof(EditMessageCommand), command.EditorId);
+        if (message.Content == command.NewContent)
             return message;
 
-        message = message with { Content = request.NewContent, EditedAt = DateTime.UtcNow };
-        await messageCollection.ReplaceOneAsync(m => m.Id == request.MessageId, message, cancellationToken: cancellationToken);
+        message = message with { Content = command.NewContent, EditedAt = DateTime.UtcNow };
+        await messageCollection.ReplaceOneAsync(m => m.Id == command.MessageId, message, cancellationToken: cancellationToken);
         return message;
     }
 }

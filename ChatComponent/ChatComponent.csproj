@@ -11,13 +11,4 @@
     <ProjectReference Include="..\Database\Database.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="ChatOperations\Create\" />
-    <Folder Include="ChatOperations\Delete\" />
-    <Folder Include="ChatOperations\Get\" />
-    <Folder Include="ChatOperations\Join\" />
-    <Folder Include="ChatOperations\Leave\" />
-    <Folder Include="ChatOperations\Update\" />
-  </ItemGroup>
-
 </Project>

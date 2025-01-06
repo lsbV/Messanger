@@ -12,7 +12,7 @@ public record VerifiedUpdateGroupChatCommand(
     ChatImage Image)
     : UpdateGroupChatCommand(ChatId, Name, Description, Image), IVerifiedRequestForChat;
 
-public record VerifiedDeleteChatByIdCommand(UserId RequesterId, ChatId ChatId) : DeleteChatByIdCommand(ChatId), IVerifiedRequestForChat;
+public record VerifiedDeleteChatCommand(UserId RequesterId, ChatId ChatId) : DeleteChatCommand(ChatId), IVerifiedRequestForChat;
 
 internal interface IVerifiedRequestForChat
 {
@@ -23,7 +23,7 @@ internal interface IVerifiedRequestForChat
 public class MembershipVerification(AppDbContext context)
     : IPipelineBehavior<GetChatByIdQuery, Chat>,
         IPipelineBehavior<UpdateGroupChatCommand, GroupChat>,
-        IPipelineBehavior<DeleteChatByIdCommand, Unit>
+        IPipelineBehavior<DeleteChatCommand, Unit>
 {
     public async Task<Chat> Handle(GetChatByIdQuery request, RequestHandlerDelegate<Chat> next, CancellationToken cancellationToken)
     {
@@ -38,7 +38,7 @@ public class MembershipVerification(AppDbContext context)
 
         return await next();
     }
-    public async Task<Unit> Handle(DeleteChatByIdCommand request, RequestHandlerDelegate<Unit> next, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(DeleteChatCommand request, RequestHandlerDelegate<Unit> next, CancellationToken cancellationToken)
     {
         await Verify(request, cancellationToken, GroupChatRole.Owner);
 
@@ -53,7 +53,7 @@ public class MembershipVerification(AppDbContext context)
         var verification = await Verify(request, cancellationToken);
 
         var groupChatUser = await context.GroupChatUsers.FirstOrDefaultAsync(g => g.UserId == verification.RequesterId && g.GroupChatId == verification.ChatId, cancellationToken);
-        if (groupChatUser is null || !allowedRoles.Contains(groupChatUser.GroupChatRole))
+        if (groupChatUser is null || !allowedRoles.Contains(groupChatUser.Role))
         {
             throw new ForbiddenOperationException(nameof(GetChatByIdQuery), verification.RequesterId);
         }

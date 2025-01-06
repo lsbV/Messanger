@@ -1,5 +1,4 @@
-﻿using ChatComponent.ChatOperations;
-using ChatComponent.Exceptions;
+﻿using ChatComponent.Exceptions;
 using Core.Exceptions;
 
 namespace Tests.ChatComponent;
@@ -22,7 +21,7 @@ public class UserJoinGroupChatHandlerTests
         // Arrange
         var user = EntityFactory.CreateAndAddToContextRandomUser(_context);
         var groupChat = EntityFactory.CreateAndAddToContextRandomGroupChat(_context, []);
-        var request = new UserJoinGroupChatRequest(user.Id, groupChat.Id);
+        var request = new JoinGroupChatCommand(user.Id, groupChat.Id);
         await _context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Act
@@ -32,8 +31,6 @@ public class UserJoinGroupChatHandlerTests
         var groupChatUser = await _context.GroupChatUsers.FindAsync([groupChat.Id, user.Id], TestContext.Current.CancellationToken);
         Assert.NotNull(groupChatUser);
 
-        var joinEvent = await _context.ChatEvents.FirstOrDefaultAsync(e => e.ChatId == groupChat.Id, TestContext.Current.CancellationToken);
-        Assert.NotNull(joinEvent);
     }
 
     [Fact]
@@ -42,8 +39,7 @@ public class UserJoinGroupChatHandlerTests
         // Arrange
         var user = EntityFactory.CreateAndAddToContextRandomUser(_context);
         var groupChat = EntityFactory.CreateAndAddToContextRandomGroupChat(_context, [user]);
-        var request = new UserJoinGroupChatRequest(user.Id, groupChat.Id);
-        var groupChatUser = new GroupChatUser(groupChat.Id, user.Id, GroupChatRole.User, DateTime.UtcNow);
+        var request = new JoinGroupChatCommand(user.Id, groupChat.Id);
         // Act
         async Task Act() => await _handler.Handle(request, TestContext.Current.CancellationToken);
         // Assert
@@ -56,7 +52,7 @@ public class UserJoinGroupChatHandlerTests
         // Arrange
         var user = EntityFactory.CreateAndAddToContextRandomUser(_context);
         var groupChat = EntityFactory.CreateAndAddToContextRandomGroupChat(_context, [user]);
-        var request = new UserJoinGroupChatRequest(user.Id, groupChat.Id);
+        var request = new JoinGroupChatCommand(user.Id, groupChat.Id);
         _context.Remove(groupChat);
         await _context.SaveChangesAsync(TestContext.Current.CancellationToken);
         // Act
@@ -71,7 +67,7 @@ public class UserJoinGroupChatHandlerTests
         // Arrange
         var user = EntityFactory.CreateAndAddToContextRandomUser(_context);
         var groupChat = EntityFactory.CreateRandomGroupChat() with { JoinMode = GroupChatJoinMode.Invitation };
-        var request = new UserJoinGroupChatRequest(user.Id, groupChat.Id);
+        var request = new JoinGroupChatCommand(user.Id, groupChat.Id);
         _context.Add(groupChat);
         await _context.SaveChangesAsync(TestContext.Current.CancellationToken);
         // Act

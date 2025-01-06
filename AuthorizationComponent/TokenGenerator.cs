@@ -2,7 +2,7 @@
 
 public class TokenGenerator(SigningCredentials credentials, IOptions<TokenGeneratorOptions> options) : ITokenGenerator
 {
-    private readonly TokenGeneratorOptions options = options.Value;
+    private readonly TokenGeneratorOptions _options = options.Value;
 
     public string GenerateToken(User user)
     {
@@ -13,13 +13,12 @@ public class TokenGenerator(SigningCredentials credentials, IOptions<TokenGenera
             new(ClaimTypes.Email, user.Email.Value),
             new(ClaimTypes.Version, user.AuthorizationVersion.Value.ToString())
         ];
-        var nowWithoutSeconds = DateTime.Now.AddSeconds(-DateTime.Now.Second);
 
         var token = new JwtSecurityToken(
-            issuer: options.Issuer,
-            audience: options.Audience,
+            issuer: _options.Issuer,
+            audience: _options.Audience,
             claims: claims,
-            expires: DateTime.Now.AddSeconds(-DateTime.Now.Second).AddMinutes(options.ExpirationTimeInMinutes), // remove seconds to avoid token expiration issues
+            expires: DateTime.Now.AddSeconds(-DateTime.Now.Second).AddMinutes(_options.ExpirationTimeInMinutes), // remove seconds to avoid token expiration issues
             signingCredentials: credentials
         );
 

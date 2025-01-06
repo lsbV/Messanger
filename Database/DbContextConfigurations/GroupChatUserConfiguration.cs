@@ -10,7 +10,7 @@ internal class GroupChatUserConfiguration : IEntityTypeConfiguration<GroupChatUs
             .HasKey(gcu => new { gcu.GroupChatId, gcu.UserId });
 
         builder
-            .Property(m => m.GroupChatRole)
+            .Property(m => m.Role)
             .HasConversion(
                 c => c.ToString(),
                 c => Enum.Parse<GroupChatRole>(c))

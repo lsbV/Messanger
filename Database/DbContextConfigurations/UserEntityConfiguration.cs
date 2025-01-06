@@ -21,7 +21,10 @@ internal class UserEntityConfiguration : IEntityTypeConfiguration<User>
         builder
             .Property(u => u.Email)
             .HasConversion(u => u.Value, u => new Email(u))
-            .HasMaxLength(255);
+            .HasMaxLength(255)
+            .IsRequired();
+        builder.HasIndex(u => u.Email)
+            .IsUnique();
 
         builder
             .Property(u => u.AuthorizationVersion)
@@ -30,7 +33,8 @@ internal class UserEntityConfiguration : IEntityTypeConfiguration<User>
         builder
             .Property(u => u.Avatar)
             .HasConversion(u => u.Url, u => new Avatar(u))
-            .HasMaxLength(255);
+            .HasMaxLength(100)
+            .HasColumnName("Avatar");
 
         builder
             .Property(u => u.Password)

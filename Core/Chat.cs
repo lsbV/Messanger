@@ -14,6 +14,10 @@ public record ChatEventId(Guid Value)
     public static ChatEventId New => new ChatEventId(Guid.NewGuid());
 }
 
+public record UserCreatedGroupChatEvent(ChatEventId Id, ChatId ChatId, UserId UserId, DateTime CreatedAt) : ChatEvent(Id, ChatId, CreatedAt);
+
+public record UserCreatedPrivateChatEvent(ChatEventId Id, ChatId ChatId, UserId UserId, DateTime CreatedAt) : ChatEvent(Id, ChatId, CreatedAt);
+
 public record UserJoinedGroupChatEvent(ChatEventId Id, ChatId ChatId, UserId UserId, DateTime CreatedAt) : ChatEvent(Id, ChatId, CreatedAt);
 
 public record UserLeftGroupChatEvent(ChatEventId Id, ChatId ChatId, UserId UserId, DateTime CreatedAt) : ChatEvent(Id, ChatId, CreatedAt);
@@ -23,6 +27,8 @@ public record GroupChatImageUpdatedEvent(ChatEventId Id, ChatId ChatId, ChatImag
 public record GroupChatNameUpdatedEvent(ChatEventId Id, ChatId ChatId, ChatName ChatName, DateTime CreatedAt) : ChatEvent(Id, ChatId, CreatedAt);
 
 public record GroupChatDescriptionUpdatedEvent(ChatEventId Id, ChatId ChatId, ChatDescription ChatDescription, DateTime CreatedAt) : ChatEvent(Id, ChatId, CreatedAt);
+
+public record ChatDeletedEvent(ChatEventId Id, ChatId ChatId, DateTime CreatedAt) : ChatEvent(Id, ChatId, CreatedAt);
 
 
 

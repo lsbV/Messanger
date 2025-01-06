@@ -1,4 +1,4 @@
-﻿using Database;
+﻿using Azure.Storage.Blobs;
 using Database.MongoDbConfigurations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -15,20 +15,23 @@ public static class DatabaseExtensions
     {
         services.AddSqlDatabase(configuration);
         services.AddMongoDatabase(configuration);
+        services.AddAzureBlobStorage(configuration);
 
         return services;
     }
 
-    public static void AddSqlDatabase(this IServiceCollection services, IConfiguration configuration)
+    private static void AddSqlDatabase(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<AppDbContext>(options =>
         {
             options.UseSqlServer(configuration.GetConnectionString("SqlDatabase"));
         });
-
+        using var scope = services.BuildServiceProvider().CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        context.RecreateDatabase();
     }
 
-    public static void AddMongoDatabase(this IServiceCollection services, IConfiguration configuration)
+    private static void AddMongoDatabase(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<MongoDbConfiguration>(configuration.GetSection("MongoDbConfiguration"));
         services.AddSingleton<IMongoClient>(sp =>
@@ -62,6 +65,22 @@ public static class DatabaseExtensions
             var database = sp.GetRequiredService<IMongoDatabase>();
             return database.GetCollection<Message>(settings.MessageCollectionName);
         });
+    }
+
+    public static IServiceCollection AddAzureBlobStorage(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddSingleton<BlobContainerClient>(sp =>
+        {
+            var connectionString = configuration["AzureStorage:ConnectionString"];
+            var containerName = configuration["AzureStorage:ContainerName"];
+            var blobServiceClient = new BlobServiceClient(connectionString);
+            if (!blobServiceClient.GetBlobContainerClient(containerName).Exists())
+            {
+                blobServiceClient.CreateBlobContainer(containerName);
+            }
+            return blobServiceClient.GetBlobContainerClient(containerName);
+        });
+        return services;
     }
 
 }

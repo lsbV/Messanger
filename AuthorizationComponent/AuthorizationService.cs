@@ -1,14 +1,31 @@
-﻿namespace AuthorizationComponent;
+﻿using Azure.Storage.Blobs;
 
-public class AuthorizationService(AppDbContext context, ITokenGenerator tokenGenerator) : IAuthorizationService
+namespace AuthorizationComponent;
+
+public class AuthorizationService(AppDbContext context, ITokenGenerator tokenGenerator, BlobContainerClient containerClient) : IAuthorizationService
 {
-    public async Task RegisterUserAsync(User user)
+    public async Task RegisterUserAsync(RegisterUserInfo registerUserInfo, CancellationToken cancellationToken)
     {
+        if (await context.Users.Where(u => u.Email == registerUserInfo.Email).AnyAsync(cancellationToken))
+        {
+            throw new UserAlreadyExistsException(registerUserInfo.Email);
+        }
         var salt = GenerateSalt();
-        user = user with { Password = new Password(HashPassword(user.Password.Hash, salt), salt) };
+        var password = new Password(HashPassword(registerUserInfo.Password, salt), salt);
+        var id = UserId.New();
+        var blobName = "avatars/" + id.Value;
+        var blobClient = containerClient.GetBlobClient(blobName);
+        var user = new User(
+            id,
+            registerUserInfo.Name,
+            password,
+            registerUserInfo.Email,
+            new Avatar(blobName),
+            AuthorizationVersion.Default);
 
+        await blobClient.UploadAsync(registerUserInfo.AvatarReadOnlyStream.Content, false, cancellationToken);
         context.Add(user);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(cancellationToken);
     }
 
     public async Task<User> GetUserAsync(UserId userId, CancellationToken cancellationToken)
@@ -31,13 +48,13 @@ public class AuthorizationService(AppDbContext context, ITokenGenerator tokenGen
         return user;
     }
 
-    private async Task<bool> ValidateUserPasswordAsync(UserId userId, string password, CancellationToken cancellationToken)
+    private async Task<bool> ValidateUserPasswordAsync(UserId userId, RawPassword password, CancellationToken cancellationToken)
     {
         var user = await GetUserAsync(userId, cancellationToken);
         return user.Password.Hash == HashPassword(password, user.Password.Salt);
     }
 
-    public async Task<AuthorizationInfo> LoginUserAsync(Email email, string password, CancellationToken cancellationToken)
+    public async Task<AuthorizationInfo> LoginUserAsync(Email email, RawPassword password, CancellationToken cancellationToken)
     {
         var user = await context.Users.FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
         if (user is null || !await ValidateUserPasswordAsync(user.Id, password, cancellationToken))
@@ -48,7 +65,7 @@ public class AuthorizationService(AppDbContext context, ITokenGenerator tokenGen
         return new AuthorizationInfo(user.Id, user.Name, user.Email, user.Avatar, token);
     }
 
-    public async Task ChangePasswordAsync(UserId userId, AuthorizationVersion authorizationVersion, string newPassword, CancellationToken cancellationToken)
+    public async Task ChangePasswordAsync(UserId userId, AuthorizationVersion authorizationVersion, RawPassword newPassword, CancellationToken cancellationToken)
     {
         var user = await GetUserAsync(userId, cancellationToken);
         if (!await ValidateAuthorizationVersionAsync(userId, authorizationVersion, cancellationToken))
@@ -71,17 +88,26 @@ public class AuthorizationService(AppDbContext context, ITokenGenerator tokenGen
         return user.AuthorizationVersion == authorizationVersion;
     }
 
-    public static string HashPassword(string password, string salt)
+    public static PasswordHash HashPassword(RawPassword password, PasswordSalt salt)
     {
-        var hashedBytes = SHA256.HashData(Encoding.UTF8.GetBytes(password + salt));
-        return Convert.ToHexStringLower(hashedBytes);
+        var hashedBytes = SHA256.HashData(Encoding.UTF8.GetBytes(password.Value + salt.Value));
+        var strHash = Convert.ToHexStringLower(hashedBytes);
+        return new PasswordHash(strHash);
     }
 
-    public static string GenerateSalt()
+    public static PasswordSalt GenerateSalt()
     {
         var salt = new byte[32];
         using var rng = RandomNumberGenerator.Create();
         rng.GetBytes(salt);
-        return Convert.ToHexStringLower(salt);
+        var strSalt = Convert.ToHexStringLower(salt);
+        return new PasswordSalt(strSalt);
     }
 }
+
+public class UserAlreadyExistsException(Email email)
+    : EntityAlreadyExistsException($"User with email {email} already exists.")
+{
+    public readonly Email Email = email;
+}
+

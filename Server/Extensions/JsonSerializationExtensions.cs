@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using Server.Converters;
 
+namespace Server.Extensions;
 internal static class JsonSerializationExtensions
 {
     public static IServiceCollection ConfigureJsonSerialization(this IServiceCollection services)

@@ -10,6 +10,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -24,6 +25,7 @@
 		<ProjectReference Include="..\ChatComponent\ChatComponent.csproj" />
 		<ProjectReference Include="..\MessageComponent\MessageComponent.csproj" />
 		<ProjectReference Include="..\Messanger.ServiceDefaults\Messenger.ServiceDefaults.csproj" />
+		<ProjectReference Include="..\Server.Models\Server.Models.csproj" />
 	</ItemGroup>
 
 </Project>

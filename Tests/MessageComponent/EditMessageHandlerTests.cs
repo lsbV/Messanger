@@ -13,11 +13,11 @@ public class EditMessageHandlerTests
     }
 
     [Fact]
-    public async Task Handle_WhenMessageExist_ShouldReturnUpdatedMessage()
+    public async Task Handle_WhenMessageExistAndEditorIsAuthor_ShouldReturnUpdatedMessage()
     {
-        var message = EntityFactory.CreateAndAddToContextRandomMessage();
+        var message = EntityFactory.CreateRandomMessage();
         await _messageCollection.InsertOneAsync(message, null, TestContext.Current.CancellationToken);
-        var request = new EditMessageRequest(message.Id, new TextContent("new message"));
+        var request = new EditMessageCommand(message.SenderId, message.Id, new TextContent("new message"));
 
         var result = await _handler.Handle(request, TestContext.Current.CancellationToken);
 
@@ -29,7 +29,7 @@ public class EditMessageHandlerTests
     [Fact]
     public async Task Handle_WhenMessageNotExist_ShouldThrowException()
     {
-        var request = new EditMessageRequest(EntityFactory.RandomMessageId(), new TextContent("new message"));
+        var request = new EditMessageCommand(UserId.New(), EntityFactory.RandomMessageId(), new TextContent("new message"));
 
         await Assert.ThrowsAsync<MessageNotFoundException>(() => _handler.Handle(request, TestContext.Current.CancellationToken));
     }
@@ -37,9 +37,9 @@ public class EditMessageHandlerTests
     [Fact]
     public async Task Handle_WhenMessageContentIsSame_ShouldNotUpdateMessage()
     {
-        var message = EntityFactory.CreateAndAddToContextRandomMessage();
+        var message = EntityFactory.CreateRandomMessage();
         await _messageCollection.InsertOneAsync(message, null, TestContext.Current.CancellationToken);
-        var request = new EditMessageRequest(message.Id, message.Content);
+        var request = new EditMessageCommand(message.SenderId, message.Id, message.Content);
 
         var result = await _handler.Handle(request, TestContext.Current.CancellationToken);
 

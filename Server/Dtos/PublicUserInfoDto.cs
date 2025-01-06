@@ -1,1 +1,0 @@
-internal record PublicUserInfoDto(string Id, string Username, string AvatarUrl);

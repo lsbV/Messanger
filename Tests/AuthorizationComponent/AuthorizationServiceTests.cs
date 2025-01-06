@@ -6,12 +6,16 @@ public class AuthorizationServiceTests : IDisposable
 {
     private readonly AuthorizationService _authorizationService;
     private readonly AppDbContext _context;
+    private readonly BlobContainerClient _containerClient;
 
-    public AuthorizationServiceTests(SqlFixture sqlFixture, TokenGeneratorAssemblyFixture tokenGeneratorFixture)
+    public AuthorizationServiceTests(SqlFixture sqlFixture, TokenGeneratorAssemblyFixture tokenGeneratorFixture, AbsFixture absFixture)
     {
         _context = new AppDbContext(sqlFixture.Options);
-
-        _authorizationService = new AuthorizationService(_context, new TokenGenerator(tokenGeneratorFixture.SigningCredentials, tokenGeneratorFixture.Options));
+        _containerClient = absFixture.ContainerClient;
+        _authorizationService = new AuthorizationService(
+            _context,
+            tokenGeneratorFixture.TokenGenerator,
+            _containerClient);
     }
 
     [Fact]
@@ -67,7 +71,7 @@ public class AuthorizationServiceTests : IDisposable
     {
         // Arrange
         var salt = AuthorizationService.GenerateSalt();
-        const string password = "password";
+        var password = new RawPassword("password");
         var hash = AuthorizationService.HashPassword(password, salt);
         var user = EntityFactory.CreateRandomUser() with { Password = new Password(hash, salt) };
         _context.Add(user);
@@ -89,7 +93,7 @@ public class AuthorizationServiceTests : IDisposable
         // Arrange
         var email = new Email(Guid.NewGuid().ToString());
         // Act
-        async Task Act() => await _authorizationService.LoginUserAsync(email, Guid.NewGuid().ToString(), TestContext.Current.CancellationToken);
+        async Task Act() => await _authorizationService.LoginUserAsync(email, EntityFactory.GenerateRandomRawPassword(), TestContext.Current.CancellationToken);
         // Assert
         await Assert.ThrowsAsync<IncorrectCredentialException>(Act);
     }
@@ -101,7 +105,7 @@ public class AuthorizationServiceTests : IDisposable
         var user = EntityFactory.CreateAndAddToContextRandomUser(_context);
         await _context.SaveChangesAsync(TestContext.Current.CancellationToken);
         // Act
-        async Task Act() => await _authorizationService.LoginUserAsync(user.Email, Guid.NewGuid().ToString(), TestContext.Current.CancellationToken);
+        async Task Act() => await _authorizationService.LoginUserAsync(user.Email, EntityFactory.GenerateRandomRawPassword(), TestContext.Current.CancellationToken);
         // Assert
         await Assert.ThrowsAsync<IncorrectCredentialException>(Act);
     }
@@ -113,7 +117,7 @@ public class AuthorizationServiceTests : IDisposable
         var user = EntityFactory.CreateAndAddToContextRandomUser(_context);
         var oldPassword = user.Password;
         await _context.SaveChangesAsync(TestContext.Current.CancellationToken);
-        var newPassword = Guid.NewGuid().ToString();
+        var newPassword = EntityFactory.GenerateRandomRawPassword();
         // Act
         await _authorizationService.ChangePasswordAsync(user.Id, user.AuthorizationVersion, newPassword, TestContext.Current.CancellationToken);
         // Assert
@@ -128,7 +132,7 @@ public class AuthorizationServiceTests : IDisposable
         // Arrange
         var userId = new UserId(Guid.NewGuid());
         // Act
-        async Task Act() => await _authorizationService.ChangePasswordAsync(userId, new AuthorizationVersion(1), Guid.NewGuid().ToString(), TestContext.Current.CancellationToken);
+        async Task Act() => await _authorizationService.ChangePasswordAsync(userId, new AuthorizationVersion(1), EntityFactory.GenerateRandomRawPassword(), TestContext.Current.CancellationToken);
         // Assert
         await Assert.ThrowsAsync<UserNotFoundException>(Act);
     }
@@ -140,7 +144,7 @@ public class AuthorizationServiceTests : IDisposable
         var user = EntityFactory.CreateAndAddToContextRandomUser(_context);
         await _context.SaveChangesAsync(TestContext.Current.CancellationToken);
         // Act
-        async Task Act() => await _authorizationService.ChangePasswordAsync(user.Id, user.AuthorizationVersion.Next(), Guid.NewGuid().ToString(), TestContext.Current.CancellationToken);
+        async Task Act() => await _authorizationService.ChangePasswordAsync(user.Id, user.AuthorizationVersion.Next(), EntityFactory.GenerateRandomRawPassword(), TestContext.Current.CancellationToken);
         // Assert
         await Assert.ThrowsAsync<ForbiddenOperationException>(Act);
     }
@@ -176,7 +180,7 @@ public class AuthorizationServiceTests : IDisposable
         var result = AuthorizationService.GenerateSalt();
         // Assert
         Assert.NotNull(result);
-        Assert.NotEmpty(result);
+        Assert.NotEmpty(result.Value);
     }
 
 
@@ -184,14 +188,14 @@ public class AuthorizationServiceTests : IDisposable
     public void HashPassword_WhenPasswordIsValid_ReturnsHashedPassword()
     {
         // Arrange
-        var password = "password";
+        var password = new RawPassword("password");
         var salt = AuthorizationService.GenerateSalt();
         // Act
         var result1 = AuthorizationService.HashPassword(password, salt);
         var result2 = AuthorizationService.HashPassword(password, salt);
         // Assert
         Assert.NotNull(result1);
-        Assert.NotEmpty(result1);
+        Assert.NotEmpty(result1.Value);
         Assert.Equal(result1, result2);
     }
 
@@ -199,18 +203,60 @@ public class AuthorizationServiceTests : IDisposable
     public void HashPassword_WhenPasswordIsInvalid_ReturnsDifferentHashedPassword()
     {
         // Arrange
-        var password1 = "password1";
-        var password2 = "password2";
+        var password1 = new RawPassword("password1");
+        var password2 = new RawPassword("password2");
         var salt = AuthorizationService.GenerateSalt();
         // Act
         var result1 = AuthorizationService.HashPassword(password1, salt);
         var result2 = AuthorizationService.HashPassword(password2, salt);
         // Assert
         Assert.NotNull(result1);
-        Assert.NotEmpty(result1);
+        Assert.NotEmpty(result1.Value);
         Assert.NotNull(result2);
-        Assert.NotEmpty(result2);
+        Assert.NotEmpty(result2.Value);
         Assert.NotEqual(result1, result2);
+    }
+
+    [Fact]
+    public async Task Register_WhenUserDoesNotExist_UserIsRegistered()
+    {
+        await using var avatarStream = new FileStream("Assets/avatar.webp", FileMode.Open);
+        // Arrange
+        var registerUserInfo = new RegisterUserInfo(
+            new UserName("name"),
+            new Email("email"),
+            new RawPassword("password"),
+            new AvatarReadOnlyFileStream(avatarStream));
+        // Act
+        await _authorizationService.RegisterUserAsync(registerUserInfo, TestContext.Current.CancellationToken);
+        // Assert
+        var result = await _context.Users.FirstOrDefaultAsync(u => u.Email == registerUserInfo.Email, TestContext.Current.CancellationToken);
+        Assert.NotNull(result);
+        Assert.Equal(registerUserInfo.Name, result.Name);
+        Assert.Equal(registerUserInfo.Email, result.Email);
+        Assert.NotNull(result.Password);
+        Assert.NotNull(result.Avatar);
+        var blobExist = await _containerClient.GetBlobClient("avatars/" + result.Id.Value).ExistsAsync(TestContext.Current.CancellationToken);
+        Assert.NotNull(blobExist);
+    }
+
+    [Fact]
+    public async Task Register_WhenUserExists_ThrowsUserAlreadyExistsException()
+    {
+        FileStream? avatarStream = null;
+        // Arrange
+        var user = EntityFactory.CreateRandomUser();
+        _context.Add(user);
+        await _context.SaveChangesAsync(TestContext.Current.CancellationToken);
+        var registerUserInfo = new RegisterUserInfo(
+            user.Name,
+            user.Email,
+            EntityFactory.GenerateRandomRawPassword(),
+            new AvatarReadOnlyFileStream(avatarStream!));
+        // Act
+        async Task Act() => await _authorizationService.RegisterUserAsync(registerUserInfo, TestContext.Current.CancellationToken);
+        // Assert
+        await Assert.ThrowsAsync<UserAlreadyExistsException>(Act);
     }
 
     public void Dispose()

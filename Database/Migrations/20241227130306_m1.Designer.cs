@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Database.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241222114515_m1")]
+    [Migration("20241227130306_m1")]
     partial class m1
     {
         /// <inheritdoc />
@@ -79,8 +79,9 @@ namespace Database.Migrations
 
                     b.Property<string>("Avatar")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("Avatar");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -92,9 +93,25 @@ namespace Database.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("Email")
+                        .IsUnique();
+
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Core.UserId", b =>
+                {
+                    b.Property<Guid>("Value")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.ToTable("ChatMembers");
                 });
 
             modelBuilder.Entity("Database.Models.GroupChatUser", b =>
@@ -105,18 +122,32 @@ namespace Database.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("GroupChatRole")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("JoinDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("GroupChatId", "UserId");
 
                     b.HasIndex("UserId");
 
                     b.ToTable("GroupChatUsers");
+                });
+
+            modelBuilder.Entity("Database.VerificationResult", b =>
+                {
+                    b.Property<bool>("ChatExists")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsMemberOfChat")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("UserExists")
+                        .HasColumnType("bit");
+
+                    b.ToTable("CheckUserAndChatExistenceResults");
                 });
 
             modelBuilder.Entity("Core.GroupChat", b =>

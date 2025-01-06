@@ -1,20 +1,18 @@
-﻿using ChatComponent.ChatOperations;
-
-namespace Tests.ChatComponent;
+﻿namespace Tests.ChatComponent;
 
 public class GetChatByIdHandlerTests(SqlFixture sqlFixture) : IDisposable
 {
-    private readonly AppDbContext context = new AppDbContext(sqlFixture.Options);
+    private readonly AppDbContext _context = new AppDbContext(sqlFixture.Options);
 
 
     [Fact]
     public async Task Handle_ShouldReturnGroupChat()
     {
         // Arrange
-        var handler = new GetChatByIdHandler(context);
-        var owner = EntityFactory.CreateAndAddToContextRandomUser(context);
-        var chat = EntityFactory.CreateAndAddToContextRandomGroupChat(context, [owner]);
-        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
+        var handler = new GetChatByIdHandler(_context);
+        var owner = EntityFactory.CreateAndAddToContextRandomUser(_context);
+        var chat = EntityFactory.CreateAndAddToContextRandomGroupChat(_context, [owner]);
+        await _context.SaveChangesAsync(TestContext.Current.CancellationToken);
         var query = new GetChatByIdQuery(chat.Id);
         // Act
         var result = await handler.Handle(query, CancellationToken.None);
@@ -31,11 +29,11 @@ public class GetChatByIdHandlerTests(SqlFixture sqlFixture) : IDisposable
     public async Task Handle_ShouldReturnPrivateChat()
     {
         // Arrange
-        var handler = new GetChatByIdHandler(context);
-        var user1 = EntityFactory.CreateAndAddToContextRandomUser(context);
-        var user2 = EntityFactory.CreateAndAddToContextRandomUser(context);
-        var chat = EntityFactory.CreateAndAddToContextRandomPrivateChat(context, user1.Id, user2.Id);
-        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
+        var handler = new GetChatByIdHandler(_context);
+        var user1 = EntityFactory.CreateAndAddToContextRandomUser(_context);
+        var user2 = EntityFactory.CreateAndAddToContextRandomUser(_context);
+        var chat = EntityFactory.CreateAndAddToContextRandomPrivateChat(_context, user1.Id, user2.Id);
+        await _context.SaveChangesAsync(TestContext.Current.CancellationToken);
         var query = new GetChatByIdQuery(chat.Id);
         // Act
         var result = await handler.Handle(query, CancellationToken.None);
@@ -50,7 +48,7 @@ public class GetChatByIdHandlerTests(SqlFixture sqlFixture) : IDisposable
 
     public void Dispose()
     {
-        context.Dispose();
+        _context.Dispose();
     }
 
 }

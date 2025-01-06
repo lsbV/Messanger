@@ -31,6 +31,28 @@ namespace Database.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ChatMembers",
+                columns: table => new
+                {
+                    Value = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CheckUserAndChatExistenceResults",
+                columns: table => new
+                {
+                    UserExists = table.Column<bool>(type: "bit", nullable: false),
+                    ChatExists = table.Column<bool>(type: "bit", nullable: false),
+                    IsMemberOfChat = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                });
+
+            migrationBuilder.CreateTable(
                 name: "GroupChats",
                 columns: table => new
                 {
@@ -52,8 +74,9 @@ namespace Database.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Avatar = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Avatar = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     AuthorizationVersion = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -67,7 +90,7 @@ namespace Database.Migrations
                 {
                     GroupChatId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    GroupChatRole = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     JoinDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -146,6 +169,12 @@ namespace Database.Migrations
                 name: "IX_PrivateChats_UserId2",
                 table: "PrivateChats",
                 column: "UserId2");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_Email",
+                table: "Users",
+                column: "Email",
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -153,6 +182,12 @@ namespace Database.Migrations
         {
             migrationBuilder.DropTable(
                 name: "ChatEvents");
+
+            migrationBuilder.DropTable(
+                name: "ChatMembers");
+
+            migrationBuilder.DropTable(
+                name: "CheckUserAndChatExistenceResults");
 
             migrationBuilder.DropTable(
                 name: "GroupChatUsers");

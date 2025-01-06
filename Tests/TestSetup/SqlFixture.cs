@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-
-[assembly: AssemblyFixture(typeof(SqlFixture))]
+﻿[assembly: AssemblyFixture(typeof(SqlFixture))]
 
 namespace Tests.TestSetup;
 
@@ -11,7 +9,6 @@ public class SqlFixture : IDisposable
     private bool _disposed;
     public SqlFixture()
     {
-
         var config = new ConfigurationBuilder()
             .AddJsonFile("testsettings.json")
             .Build();
@@ -21,9 +18,7 @@ public class SqlFixture : IDisposable
             .Options;
         _context = new AppDbContext(Options);
         _context.Database.EnsureDeleted();
-        _context.EnsureCreated();
-        //_context.Database.EnsureCreated();
-
+        _context.RecreateDatabase();
     }
 
     protected virtual void Dispose(bool disposing)

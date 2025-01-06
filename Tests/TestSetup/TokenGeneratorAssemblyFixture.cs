@@ -9,6 +9,7 @@ public class TokenGeneratorAssemblyFixture
 {
     public SigningCredentials SigningCredentials { get; }
     public IOptions<TokenGeneratorOptions> Options { get; }
+    public ITokenGenerator TokenGenerator { get; }
 
 
     public TokenGeneratorAssemblyFixture()
@@ -21,5 +22,7 @@ public class TokenGeneratorAssemblyFixture
             Issuer = "https://localhost:5001/",
             ExpirationTimeInMinutes = 60
         });
+
+        TokenGenerator = new TokenGenerator(SigningCredentials, Options);
     }
 }

@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-
-[assembly: AssemblyFixture(typeof(MongoFixture))]
+﻿[assembly: AssemblyFixture(typeof(MongoFixture))]
 namespace Tests.TestSetup;
 
 public class MongoFixture : IDisposable

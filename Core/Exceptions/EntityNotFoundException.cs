@@ -3,7 +3,7 @@
 public class EntityNotFoundException<TIdentifier> : Exception
 {
     public readonly TIdentifier Identifier;
-    private readonly string EntityName;
+    public readonly string EntityName;
 
     public EntityNotFoundException(TIdentifier identifier, string entityName) : base($"Entity {entityName} with identifier {identifier} not found.")
     {

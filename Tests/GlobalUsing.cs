@@ -9,3 +9,5 @@ global using Database.Models;
 global using Tests.TestSetup;
 global using AuthorizationComponent;
 global using ChatComponent.ChatOperations;
+global using Azure.Storage.Blobs;
+global using Microsoft.Extensions.Configuration;

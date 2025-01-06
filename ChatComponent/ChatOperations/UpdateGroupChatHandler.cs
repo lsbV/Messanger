@@ -22,31 +22,10 @@ public class UpdateGroupChatHandler(AppDbContext context) : IRequestHandler<Upda
             ChatDescription = request.ChatDescription,
             ChatImage = request.ChatImage
         };
-        var events = GetEvents(groupChat, request);
 
         context.Update(groupChat).CurrentValues.SetValues(newChat);
-        context.ChatEvents.AddRange(events);
         await context.SaveChangesAsync(cancellationToken);
         return groupChat;
-    }
-
-    private static List<ChatEvent> GetEvents(GroupChat existedGroupChat, UpdateGroupChatCommand updateGroupChat)
-    {
-        var events = new List<ChatEvent>();
-        var now = DateTime.UtcNow;
-        if (existedGroupChat.ChatName != updateGroupChat.ChatName)
-        {
-            events.Add(new GroupChatNameUpdatedEvent(ChatEventId.New, existedGroupChat.Id, updateGroupChat.ChatName, now));
-        }
-        if (existedGroupChat.ChatDescription != updateGroupChat.ChatDescription)
-        {
-            events.Add(new GroupChatDescriptionUpdatedEvent(ChatEventId.New, existedGroupChat.Id, updateGroupChat.ChatDescription, now));
-        }
-        if (existedGroupChat.ChatImage != updateGroupChat.ChatImage)
-        {
-            events.Add(new GroupChatImageUpdatedEvent(ChatEventId.New, existedGroupChat.Id, updateGroupChat.ChatImage, now));
-        }
-        return events;
     }
 }
 
